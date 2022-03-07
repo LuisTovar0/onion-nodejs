@@ -5,6 +5,7 @@ import config from "../../config";
 import BaseController from '../core/infra/baseController';
 import Result from "../core/logic/result";
 
+import IUpdateProductDto from "../dto/nonEntity/iUpdateProductDto";
 import IProductDto from '../dto/iProductDto';
 import IProductService from '../services/iServices/iProductService';
 import IProductController from "./iControllers/iProductController";
@@ -12,24 +13,28 @@ import IProductController from "./iControllers/iProductController";
 @Service()
 export default class ProductController extends BaseController implements IProductController {
 
-  protected executeImpl(): Promise<any> {
-    throw new Error('Method not implemented.');
-  }
-
   constructor(
     @Inject(config.services.product.name)
-    private productServiceInstance: IProductService
+    private service: IProductService
   ) {
     super();
   }
 
   public async getProductById(req: Request, resp: Response, next: NextFunction) {
     try {
-      const productRes = await this.productServiceInstance.getProduct(req.params.id) as Result<IProductDto>;
-
+      const productRes = await this.service.getProductById(req.params.id) as Result<IProductDto>;
       if (!productRes.isSuccess) return this.notFound(productRes.error.toString());
+      return this.ok(resp, productRes.getValue());
+    } catch (e) {
+      return next(e);
+    }
+  }
 
-      return this.created(resp, productRes.getValue());
+  public async getProductByName(req: Request, resp: Response, next: NextFunction) {
+    try {
+      const productRes = await this.service.getProductByName(req.params.name) as Result<IProductDto>;
+      if (!productRes.isSuccess) return this.notFound(productRes.error.toString());
+      return this.ok(resp, productRes.getValue());
     } catch (e) {
       return next(e);
     }
@@ -37,10 +42,8 @@ export default class ProductController extends BaseController implements IProduc
 
   public async createProduct(req: Request, resp: Response, next: NextFunction) {
     try {
-      const productRes = await this.productServiceInstance.createProduct(req.body as IProductDto) as Result<IProductDto>;
-
+      const productRes = await this.service.createProduct(req.body as IProductDto) as Result<IProductDto>;
       if (!productRes.isSuccess) return resp.status(402).send();
-
       return this.created(resp, productRes.getValue());
     } catch (e) {
       return next(e);
@@ -49,11 +52,9 @@ export default class ProductController extends BaseController implements IProduc
 
   public async updateProduct(req: Request, resp: Response, next: NextFunction) {
     try {
-      const productRes = await this.productServiceInstance.updateProduct(req.body as IProductDto) as Result<IProductDto>;
-
+      const productRes = await this.service.updateProduct(req.body as IUpdateProductDto) as Result<IProductDto>;
       if (!productRes.isSuccess) return this.notFound(productRes.error.toString());
-
-      return this.created(resp, productRes.getValue());
+      return this.ok(resp, productRes.getValue());
     } catch (e) {
       return next(e);
     }

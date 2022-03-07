@@ -5,15 +5,6 @@ export default abstract class BaseController {
   protected req: express.Request;
   protected res: express.Response;
 
-  protected abstract executeImpl(): Promise<void | any>;
-
-  public async execute(req: express.Request, res: express.Response): Promise<void> {
-    this.req = req;
-    this.res = res;
-
-    await this.executeImpl();
-  }
-
   public static jsonResponse(res: express.Response, code: number, message: string) {
     return res.status(code).json({message})
   }

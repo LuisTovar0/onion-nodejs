@@ -6,7 +6,7 @@ interface ProductNameProps {
   value: string;
 }
 
-export class ProductName extends ValueObject<ProductNameProps> {
+export default class ProductName extends ValueObject<ProductNameProps> {
 
   private constructor(props: ProductNameProps) {
     super(props);

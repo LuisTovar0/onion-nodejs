@@ -1,11 +1,10 @@
 import {Router} from 'express';
-import post from './productRoute';
+import product from './productRoute';
 
 export default () => {
   const app = Router();
 
-  post(app);
-  //player(app);
+  product(app);
 
-  return app
+  return app;
 }

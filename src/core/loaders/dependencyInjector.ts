@@ -2,7 +2,8 @@ import {Container} from 'typedi';
 import Logger from './logger';
 
 interface InjectablesAndSchemas {
-  schemas: NamePath[]
+  schemas: NamePath[],
+  mappers: NamePath[],
   repos: NamePath[],
   services: NamePath[],
   controllers: NamePath[],
@@ -25,6 +26,7 @@ export default (depNamesPaths: InjectablesAndSchemas) => {
     depNamesPaths.schemas.forEach(dep => {
       let schema = require(dep.path).default;
       Container.set(dep.name, schema);
+      Logger.info('👌 ' + dep.name + ' loaded');
     });
 
     let setupDep = (deps: NamePath[]) =>
@@ -35,14 +37,17 @@ export default (depNamesPaths: InjectablesAndSchemas) => {
         let classInstance = Container.get(class_);
         // rename the instance inside the container
         Container.set(dep.name, classInstance);
+        Logger.info('👌 ' + dep.name + ' loaded');
       });
 
-    setupDep(depNamesPaths.repos);
-    setupDep(depNamesPaths.services);
-    setupDep(depNamesPaths.controllers);
+    setupDep(depNamesPaths.mappers);
+    setupDep(depNamesPaths.repos); // depend on mappers
+    setupDep(depNamesPaths.services); // depend on repos
+    setupDep(depNamesPaths.controllers); // depend on services
 
   } catch (e) {
-    Logger.error('🔥 Error on dependency injector loader\n');
+    Logger.error('🔥 Error on dependency injector loader! ' +
+      'If the failing class has dependencies, those must be set up first in the Container.\n');
     throw e;
   }
 };

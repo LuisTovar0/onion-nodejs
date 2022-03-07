@@ -1,5 +1,11 @@
-export abstract class Mapper<DomainEntityOrValueObject> {
-  // public static toDomain (raw: any): T;
-  // public static toDTO (t: T): DTO;
-  // public static toPersistence (t: T): any;
+export default interface Mapper<Domain, DTO, DataModel> {
+
+  dtoToDomain(dto: DTO, other?): Domain;
+
+  domainToDTO(model: Domain, other?): DTO;
+
+  dataModelToDTO(dataModel: DataModel, other?): DTO;
+
+  dtoToDataModel(dto: DTO, other?): DataModel;
+
 }

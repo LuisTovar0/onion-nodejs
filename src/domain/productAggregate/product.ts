@@ -1,10 +1,10 @@
 import {AggregateRoot} from "../../core/domain/aggregateRoot";
-import {UniqueEntityID} from "../../core/domain/uniqueEntityID";
+import UniqueEntityID from "../../core/domain/uniqueEntityID";
 import Result from "../../core/logic/result";
 import {Guard} from "../../core/logic/guard";
 
 import INoIdProductDto from "../../dto/iNoIdDto/iNoIdProductDto";
-import {ProductName} from "./productName";
+import ProductName from "./productName";
 import ProductQuantity from "./productQuantity";
 
 interface PostProps {

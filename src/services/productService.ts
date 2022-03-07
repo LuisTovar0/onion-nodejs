@@ -7,43 +7,52 @@ import IProductRepo from '../db/repos/iRepos/iProductRepo';
 import Product from '../domain/productAggregate/product';
 import IProductDto from "../dto/iProductDto"
 import INoIdProductDto from '../dto/iNoIdDto/iNoIdProductDto';
-import ProductMapper from "../mappers/productMapper";
 import IProductService from './iServices/iProductService';
+import IProductMapper from "../mappers/iMappers/iProductMapper";
+import IUpdateProductDto from "../dto/nonEntity/iUpdateProductDto";
 
 @Service()
 export default class ProductService implements IProductService {
 
   constructor(
     @Inject(config.repos.product.name)
-    private productRepo: IProductRepo,
+    private repo: IProductRepo,
+    @Inject(config.mappers.product.name)
+    private mapper: IProductMapper
   ) {
   }
 
-  public async getProduct(productId: string): Promise<Result<IProductDto>> {
-    const product = await this.productRepo.findByDomainId(productId);
+  public async getProductById(productId: string): Promise<Result<IProductDto>> {
+    const product = await this.repo.getById(productId);
     return product === null
       ? Result.fail<IProductDto>("Product Not Found.")
       : Result.ok<IProductDto>(product);
   }
 
-  public async createProduct(productDto: INoIdProductDto): Promise<Result<IProductDto>> {
-    const productOrError = await Product.create(productDto);
-
-    if (!productOrError.isSuccess)
-      return Result.fail<IProductDto>(productOrError.errorValue());
-
-    let persistedProduct = await this.productRepo.save(ProductMapper.domainToDTO(productOrError.getValue()));
-
-    return Result.ok<IProductDto>(persistedProduct)
+  public async getProductByName(productName: string): Promise<Result<IProductDto>> {
+    const product = await this.repo.findByName(productName);
+    return product === null
+      ? Result.fail<IProductDto>("Product Not Found.")
+      : Result.ok<IProductDto>(product);
   }
 
-  public async updateProduct(productDto: IProductDto): Promise<Result<IProductDto>> {
-    const product = await this.productRepo.findByDomainId(productDto.domainId);
+  async createProduct(productDto: INoIdProductDto): Promise<Result<IProductDto>> {
+    const productRes = await Product.create(productDto);
+    if (!productRes.isSuccess) return Result.fail<IProductDto>(productRes.errorValue());
 
-    if (product === null) return Result.fail<IProductDto>("Product Not Found.");
+    let persistedProduct = await this.repo.save(this.mapper.domainToDTO(productRes.getValue()));
+    return Result.ok<IProductDto>(persistedProduct);
+  }
 
-    await this.productRepo.save(product);
-    return Result.ok<IProductDto>(product);
+  public async updateProduct(newInfo: IUpdateProductDto): Promise<Result<IProductDto>> {
+    const existingProduct = await this.repo.getById(newInfo.domainId);
+    if (existingProduct === null) return Result.fail<IProductDto>("Product Not Found.");
+
+    let name = newInfo.name === null ? existingProduct.name : newInfo.name;
+    let quantity = newInfo.quantity === null ? existingProduct.quantity : newInfo.quantity;
+
+    let persisted = await this.repo.save({domainId: newInfo.domainId, name: name, quantity: quantity});
+    return Result.ok<IProductDto>(persisted);
   }
 
 }

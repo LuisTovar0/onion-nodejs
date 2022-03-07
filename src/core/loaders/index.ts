@@ -6,16 +6,17 @@ import Logger from "./logger";
 
 export default async expressApp => {
   await mongooseLoader();
-  Logger.info('✌️ DB loaded and connected!');
+  Logger.info('🤙 DB loaded and connected!');
 
   await setUpDependencyInjections({
     controllers: [config.controllers.product],
     services: [config.services.product],
     repos: [config.repos.product],
+    mappers: [config.mappers.product],
     schemas: [config.schemas.product]
   });
-  Logger.info('✌️ Schemas, Controllers, Repositories, Services, etc. loaded');
+  Logger.info('😎 All dependencies are loaded');
 
   await expressLoader(expressApp);
-  Logger.info('✌️ Express loaded');
+  Logger.info('👊 Express loaded');
 };

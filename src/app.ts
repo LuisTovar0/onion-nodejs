@@ -10,12 +10,10 @@ async function startServer() {
   await require('./core/loaders').default(app);
 
   app.listen(config.port, () => {
-
-
     Logger.info('\n' +
-      '\t####################################\n' +
+      '\t#####################################\n' +
       '\t🛡️  Server listening on port: ' + config.port + ' 🛡️ \n' +
-      '\t####################################\n'
+      '\t#####################################\n'
     );
   }).on('error', err => {
     Logger.error(err);

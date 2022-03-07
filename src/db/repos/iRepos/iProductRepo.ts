@@ -1,16 +1,11 @@
-import {Repo} from "../../../core/infra/repo";
-import IProductDataModel from "../../dataModel/iProductDataModel";
-import {ProductId} from "../../../domain/productAggregate/productId";
 import IProductDto from "../../../dto/iProductDto";
 
-export default interface IProductRepo extends Repo<IProductDataModel> {
-  save(post: IProductDto): Promise<IProductDto>;
+export default interface IProductRepo {
 
-  findByDomainId(postId: ProductId | string): Promise<IProductDto>;
+  save(product: IProductDto): Promise<IProductDto>;
 
-  exists(role: IProductDto): Promise<boolean>;
+  getById(id: string): Promise<IProductDto>;
 
-  //findByIds (rolesIds: RoleId[]): Promise<Role[]>;
-  //saveCollection (roles: Role[]): Promise<Role[]>;
-  //removeByRoleIds (roles: RoleId[]): Promise<any>
+  findByName(productName: string): Promise<IProductDto>;
+
 }

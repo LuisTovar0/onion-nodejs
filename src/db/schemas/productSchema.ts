@@ -7,13 +7,11 @@ const product = new Schema(
       type: String,
       unique: true
     },
-
     name: {
       type: String,
       required: [true, 'The product name is missing.'],
-      index: true,
+      unique: true,
     },
-
     quantity: {
       type: Number,
       required: [true, 'The product quantity is missing.'],
