@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import product from './productRoute';
+import product from './productController';
 
 export default () => {
   const app = Router();

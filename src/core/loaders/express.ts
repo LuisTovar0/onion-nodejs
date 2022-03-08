@@ -1,8 +1,9 @@
 import {Application} from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import routes from '../../api';
+import routes from '../../controllers';
 import config from '../../../config';
+import NotFoundError from "../logic/notFoundError";
 
 export default (app: Application) => {
   /**
@@ -32,7 +33,7 @@ export default (app: Application) => {
 
   /// catch 404 and forward to error handler
   app.use((req, res, next) => {
-    const err = new Error('Not Found');
+    const err = new NotFoundError('Route not found' + req.baseUrl);
     err['status'] = 404;
     next(err);
   });
@@ -54,9 +55,7 @@ export default (app: Application) => {
   app.use((err, req, res, _) => {
     res.status(err.status || 500);
     res.json({
-      errors: {
-        message: err.message,
-      },
+      message: err.message,
     });
   });
 };

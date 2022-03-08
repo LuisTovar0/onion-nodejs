@@ -9,7 +9,6 @@ export default async expressApp => {
   Logger.info('🤙 DB loaded and connected!');
 
   await setUpDependencyInjections({
-    controllers: [config.controllers.product],
     services: [config.services.product],
     repos: [config.repos.product],
     mappers: [config.mappers.product],

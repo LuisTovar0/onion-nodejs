@@ -6,7 +6,6 @@ interface InjectablesAndSchemas {
   mappers: NamePath[],
   repos: NamePath[],
   services: NamePath[],
-  controllers: NamePath[],
 }
 
 interface NamePath {
@@ -40,10 +39,10 @@ export default (depNamesPaths: InjectablesAndSchemas) => {
         Logger.info('👌 ' + dep.name + ' loaded');
       });
 
-    setupDep(depNamesPaths.mappers);
+    // a class can only be set after its own dependencies are set
+    setupDep(depNamesPaths.mappers); // can only depend on each other
     setupDep(depNamesPaths.repos); // depend on mappers
     setupDep(depNamesPaths.services); // depend on repos
-    setupDep(depNamesPaths.controllers); // depend on services
 
   } catch (e) {
     Logger.error('🔥 Error on dependency injector loader! ' +

@@ -13,14 +13,8 @@ export default {
 
   databaseURL: process.env.MONGODB_URI || "mongodb://localhost:27017/test",
 
-  api: {prefix: '/api',},
+  api: {prefix: '/controllers',},
 
-  controllers: {
-    product: {
-      name: 'ProductController',
-      path: '../../controllers/productController'
-    }
-  },
   repos: {
     product: {
       name: 'ProductRepo',

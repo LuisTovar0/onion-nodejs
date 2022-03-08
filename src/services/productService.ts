@@ -9,6 +9,7 @@ import INoIdProductDto from '../dto/iNoIdDto/iNoIdProductDto';
 import IProductService from './iServices/iProductService';
 import IProductMapper from "../mappers/iMappers/iProductMapper";
 import IUpdateProductDto from "../dto/nonEntity/iUpdateProductDto";
+import NotFoundError from "../core/logic/notFoundError";
 
 @Service()
 export default class ProductService implements IProductService {
@@ -22,11 +23,17 @@ export default class ProductService implements IProductService {
   }
 
   public async getProductById(productId: string): Promise<IProductDto> {
-    return await this.repo.getById(productId);
+    const product = await this.repo.getById(productId);
+    if (product === null)
+      throw new NotFoundError('Product with ID ' + productId + ' does not exist.');
+    return product;
   }
 
   public async getProductByName(productName: string): Promise<IProductDto> {
-    return await this.repo.findByName(productName);
+    const product = await this.repo.findByName(productName);
+    if (product === null)
+      throw new NotFoundError('Product with name "' + productName + '" does not exist.');
+    return product;
   }
 
   async createProduct(productDto: INoIdProductDto): Promise<IProductDto> {

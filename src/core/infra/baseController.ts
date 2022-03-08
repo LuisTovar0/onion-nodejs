@@ -1,69 +1,75 @@
-import * as express from 'express'
-import {NextFunction} from 'express'
+import {NextFunction, Request, Response} from 'express'
+
 import NotFoundError from "../logic/notFoundError";
 import ValidationError from "../logic/validationError";
+import Logger from "../loaders/logger";
 
-export default abstract class BaseController {
-  // or even private
-  protected req: express.Request;
-  protected res: express.Response;
+export default class BaseController {
 
-  public handleException(e: Error, next: NextFunction) {
+  constructor(
+    private req: Request,
+    private res: Response,
+    private next: NextFunction
+  ) {
+  }
+
+  public handleException(e: Error) {
     if (e instanceof NotFoundError)
       return this.notFound(e.message);
     if (e instanceof ValidationError)
       return this.badRequest(e.message);
-    return next(e);
+    return this.next(e);
   }
 
-  public static messageResponse(res: express.Response, code: number, message: string) {
-    return res.status(code).json({message})
+  public jsonResponse<T>(code: number, dto: T | string) {
+    let body;
+    if (dto as T) body = dto;
+    else body = {message: dto};
+    return this.res.status(code).json(body);
   }
 
-  public ok<T>(res: express.Response, dto?: T) {
-    return !!dto ? res.status(200).json(dto) : res.sendStatus(200);
+  public ok<T>(dto?: T) {
+    return this.jsonResponse(200, dto || "OK");
   }
 
-  public created<T>(res: express.Response, dto?: T) {
-    return res.status(201).json(dto);
+  public created<T>(dto?: T) {
+    return this.jsonResponse(201, dto || "Created");
   }
 
   public badRequest(message?: string) {
-    return BaseController.messageResponse(this.res, 400, message ? message : "Bad Request");
+    return this.jsonResponse(400, message || "Bad Request");
   }
 
   public unauthorized(message?: string) {
-    return BaseController.messageResponse(this.res, 401, message ? message : 'Unauthorized');
+    return this.jsonResponse(401, message || 'Unauthorized');
   }
 
   public paymentRequired(message?: string) {
-    return BaseController.messageResponse(this.res, 402, message ? message : 'Payment required');
+    return this.jsonResponse(402, message || 'Payment required');
   }
 
   public forbidden(message?: string) {
-    return BaseController.messageResponse(this.res, 403, message ? message : 'Forbidden');
+    return this.jsonResponse(403, message || 'Forbidden');
   }
 
   public notFound(message?: string) {
-    return BaseController.messageResponse(this.res, 404, message ? message : 'Not found');
+    return this.jsonResponse(404, message || 'Not found');
   }
 
   public conflict(message?: string) {
-    return BaseController.messageResponse(this.res, 409, message ? message : 'Conflict');
+    return this.jsonResponse(409, message || 'Conflict');
   }
 
   public tooMany(message?: string) {
-    return BaseController.messageResponse(this.res, 429, message ? message : 'Too many requests');
+    return this.jsonResponse(429, message || 'Too many requests');
   }
 
   public todo() {
-    return BaseController.messageResponse(this.res, 400, 'TODO');
+    return this.jsonResponse(400, 'TODO');
   }
 
   public fail(error: Error | string) {
-    console.log(error);
-    return this.res.status(500).json({
-      message: error.toString()
-    })
+    Logger.error(error);
+    return this.jsonResponse(500, error.toString());
   }
 }

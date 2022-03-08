@@ -1,58 +1,91 @@
-import {NextFunction, Request, Response} from 'express';
-import {Inject, Service} from 'typedi';
+import {NextFunction, Request, Response, Router} from 'express';
+import {celebrate, Joi} from 'celebrate';
+import {Container} from 'typedi';
 
 import config from "../../config";
-import BaseController from '../core/infra/baseController';
-
-import IUpdateProductDto from "../dto/nonEntity/iUpdateProductDto";
-import IProductDto from '../dto/iProductDto';
-import IProductService from '../services/iServices/iProductService';
-import IProductController from "./iControllers/iProductController";
+import IProductDto from "../dto/iProductDto";
+import BaseController from "../core/infra/baseController";
+import IProductService from "../services/iServices/iProductService";
 import INoIdProductDto from "../dto/iNoIdDto/iNoIdProductDto";
+import IUpdateProductDto from "../dto/nonEntity/iUpdateProductDto";
 
-@Service()
-export default class ProductController extends BaseController implements IProductController {
+const route = Router();
 
-  constructor(
-    @Inject(config.services.product.name)
-    private service: IProductService
-  ) {
-    super();
-  }
+export default (app: Router) => {
 
-  public async getProductById(req: Request, resp: Response, next: NextFunction) {
-    try {
-      const product = await this.service.getProductById(req.params.id) as IProductDto;
-      return this.ok(resp, product);
-    } catch (e) {
-      return this.handleException(e, next);
+  app.use('/product', route);
+
+  const service = Container.get(config.services.product.name) as IProductService;
+
+  route.get('/byid/:id',
+    celebrate({
+      params: {
+        id: Joi.string().uuid()
+      }
+    }),
+    async function getProductById(req, res, next) {
+      const ctrl = new BaseController(req, res, next);
+      try {
+        const product = await service.getProductById(req.params.id) as IProductDto;
+        return ctrl.ok(product);
+      } catch (e) {
+        return ctrl.handleException(e);
+      }
     }
-  }
+  );
 
-  public async getProductByName(req: Request, resp: Response, next: NextFunction) {
-    try {
-      const product = await this.service.getProductByName(req.params.name) as IProductDto;
-      return this.ok(resp, product);
-    } catch (e) {
-      return this.handleException(e, next);
+  route.get('/byname/:name',
+    celebrate({
+      params: {
+        name: Joi.string()
+      }
+    }),
+    async function getProductByName(req, res, next) {
+      const ctrl = new BaseController(req, res, next);
+      try {
+        const product = await this.service.getProductByName(req.params.name) as IProductDto;
+        return ctrl.ok(product);
+      } catch (e) {
+        return this.handleException(e);
+      }
     }
-  }
+  );
 
-  public async createProduct(req: Request, resp: Response, next: NextFunction) {
-    try {
-      const productRes = await this.service.createProduct(req.body as INoIdProductDto) as IProductDto;
-      return this.created(resp, productRes);
-    } catch (e) {
-      return this.handleException(e, next);
+  route.post('',
+    celebrate({
+      body: Joi.object({
+        name: Joi.string().required(),
+        quantity: Joi.number().required()
+      })
+    }),
+    async function createProduct(req: Request, res: Response, next: NextFunction) {
+      const ctrl = new BaseController(req, res, next);
+      try {
+        const product = await this.service.createProduct(req.body as INoIdProductDto) as IProductDto;
+        return ctrl.created(product);
+      } catch (e) {
+        return ctrl.handleException(e);
+      }
     }
-  };
+  );
 
-  public async updateProduct(req: Request, resp: Response, next: NextFunction) {
-    try {
-      const productRes = await this.service.updateProduct(req.body as IUpdateProductDto) as IProductDto;
-      return this.ok(resp, productRes);
-    } catch (e) {
-      return this.handleException(e, next);
+  route.put('',
+    celebrate({
+      body: Joi.object({
+        id: Joi.string().required(),
+        name: Joi.string(),
+        quantity: Joi.number()
+      }),
+    }),
+    async function updateProduct(req, res, next) {
+      const ctrl = new BaseController(req, res, next);
+      try {
+        const productRes = await this.service.updateProduct(req.body as IUpdateProductDto) as IProductDto;
+        return ctrl.ok(productRes);
+      } catch (e) {
+        return ctrl.handleException(e);
+      }
     }
-  };
+  );
+
 }
