@@ -1,9 +1,20 @@
 import * as express from 'express'
+import {NextFunction} from 'express'
+import NotFoundError from "../logic/notFoundError";
+import ValidationError from "../logic/validationError";
 
 export default abstract class BaseController {
   // or even private
   protected req: express.Request;
   protected res: express.Response;
+
+  public handleException(e: Error, next: NextFunction) {
+    if (e instanceof NotFoundError)
+      return this.notFound(e.message);
+    if (e instanceof ValidationError)
+      return this.badRequest(e.message);
+    return next(e);
+  }
 
   public static messageResponse(res: express.Response, code: number, message: string) {
     return res.status(code).json({message})

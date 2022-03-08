@@ -3,7 +3,6 @@ import {Inject, Service} from 'typedi';
 
 import config from "../../config";
 import BaseController from '../core/infra/baseController';
-import Result from "../core/logic/result";
 
 import IUpdateProductDto from "../dto/nonEntity/iUpdateProductDto";
 import IProductDto from '../dto/iProductDto';
@@ -23,41 +22,37 @@ export default class ProductController extends BaseController implements IProduc
 
   public async getProductById(req: Request, resp: Response, next: NextFunction) {
     try {
-      const productRes = await this.service.getProductById(req.params.id) as Result<IProductDto>;
-      if (!productRes.isSuccess) return this.notFound(productRes.error.toString());
-      return this.ok(resp, productRes.getValue());
+      const product = await this.service.getProductById(req.params.id) as IProductDto;
+      return this.ok(resp, product);
     } catch (e) {
-      return next(e);
+      return this.handleException(e, next);
     }
   }
 
   public async getProductByName(req: Request, resp: Response, next: NextFunction) {
     try {
-      const productRes = await this.service.getProductByName(req.params.name) as Result<IProductDto>;
-      if (!productRes.isSuccess) return this.notFound(productRes.error.toString());
-      return this.ok(resp, productRes.getValue());
+      const product = await this.service.getProductByName(req.params.name) as IProductDto;
+      return this.ok(resp, product);
     } catch (e) {
-      return next(e);
+      return this.handleException(e, next);
     }
   }
 
   public async createProduct(req: Request, resp: Response, next: NextFunction) {
     try {
-      const productRes = await this.service.createProduct(req.body as INoIdProductDto) as Result<IProductDto>;
-      if (!productRes.isSuccess) return this.badRequest(productRes.error.toString());
-      return this.created(resp, productRes.getValue());
+      const productRes = await this.service.createProduct(req.body as INoIdProductDto) as IProductDto;
+      return this.created(resp, productRes);
     } catch (e) {
-      return next(e);
+      return this.handleException(e, next);
     }
   };
 
   public async updateProduct(req: Request, resp: Response, next: NextFunction) {
     try {
-      const productRes = await this.service.updateProduct(req.body as IUpdateProductDto) as Result<IProductDto>;
-      if (!productRes.isSuccess) return this.notFound(productRes.error.toString());
-      return this.ok(resp, productRes.getValue());
+      const productRes = await this.service.updateProduct(req.body as IUpdateProductDto) as IProductDto;
+      return this.ok(resp, productRes);
     } catch (e) {
-      return next(e);
+      return this.handleException(e, next);
     }
   };
 }

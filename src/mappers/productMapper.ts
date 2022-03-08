@@ -1,6 +1,5 @@
 import {Service} from "typedi";
 
-import {getValueOrThrowError} from "../core/logic/result";
 import UniqueEntityID from "../core/domain/uniqueEntityID";
 import IProductDataModel from "../db/dataModel/iProductDataModel";
 import Product from "../domain/productAggregate/product";
@@ -22,8 +21,7 @@ export default class ProductMapper implements IProductMapper {
   }
 
   public dtoToDomain(product: IProductDto): Product {
-    let productRes = Product.create(product, new UniqueEntityID(product.domainId));
-    return getValueOrThrowError(productRes);
+    return Product.create(product, new UniqueEntityID(product.domainId));
   }
 
   public dataModelToDTO(dataModel: IProductDataModel): IProductDto {

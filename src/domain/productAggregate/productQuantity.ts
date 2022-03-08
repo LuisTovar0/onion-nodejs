@@ -1,6 +1,6 @@
 import {ValueObject} from "../../core/domain/valueObject";
-import Result from "../../core/logic/result";
 import {Guard} from "../../core/logic/guard";
+import ValidationError from "../../core/logic/validationError";
 
 interface ProductQuantityProps {
   value: number
@@ -12,17 +12,13 @@ export default class ProductQuantity extends ValueObject<ProductQuantityProps> {
     super(props);
   }
 
-  public static create(quantity: number): Result<ProductQuantity> {
-    let nullVerif = Guard.againstNullOrUndefined(quantity, 'quantity');
-    if (!nullVerif.succeeded) return Result.fail<ProductQuantity>(nullVerif.message);
-
+  public static create(quantity: number): ProductQuantity {
+    Guard.againstNullOrUndefined(quantity, 'product quantity');
     if (Number.isNaN(quantity) || !Number.isInteger(quantity))
-      return Result.fail<ProductQuantity>('quantity of product must be an integer');
+      throw new ValidationError('Quantity of product must be an integer');
+    Guard.inRange(quantity, 0, 250, 'quantity');
 
-    let rangeVerif = Guard.inRange(quantity, 0, 250, 'quantity');
-    return rangeVerif.succeeded
-      ? Result.ok<ProductQuantity>(new ProductQuantity({value: quantity}))
-      : Result.fail<ProductQuantity>(rangeVerif.message);
+    return new ProductQuantity({value: quantity});
   }
 
   get value(): number {

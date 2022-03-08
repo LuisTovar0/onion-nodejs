@@ -1,6 +1,5 @@
 import {AggregateRoot} from "../../core/domain/aggregateRoot";
 import UniqueEntityID from "../../core/domain/uniqueEntityID";
-import Result from "../../core/logic/result";
 import {Guard} from "../../core/logic/guard";
 
 import INoIdProductDto from "../../dto/iNoIdDto/iNoIdProductDto";
@@ -18,21 +17,16 @@ export default class Product extends AggregateRoot<PostProps> {
     super(props, id);
   }
 
-  public static create(dto: INoIdProductDto, id?: UniqueEntityID): Result<Product> {
-    const guardResult = Guard.againstNullOrUndefinedBulk([
+  public static create(dto: INoIdProductDto, id?: UniqueEntityID): Product {
+    Guard.againstNullOrUndefinedBulk([
       {argument: dto.name, argumentName: 'product name'},
       {argument: dto.quantity, argumentName: 'product quantity'}
     ]);
-    if (!guardResult.succeeded) return Result.fail<Product>(guardResult.message)
 
-    let nameRes = ProductName.create(dto.name);
-    if (!nameRes.isSuccess) return Result.fail<Product>('Invalid product name: ' + nameRes.error);
+    let name: ProductName = ProductName.create(dto.name);
+    let quant: ProductQuantity = ProductQuantity.create(dto.quantity);
 
-    let quantRes = ProductQuantity.create(dto.quantity);
-    if (!quantRes.isSuccess) return Result.fail<Product>('Invalid product quantity: ' + quantRes.error);
-
-    const product = new Product({name: nameRes.getValue(), quantity: quantRes.getValue()}, id);
-    return Result.ok<Product>(product);
+    return new Product({name: name, quantity: quant}, id);
   }
 
   get id(): UniqueEntityID {
