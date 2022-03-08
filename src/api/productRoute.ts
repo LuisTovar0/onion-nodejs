@@ -15,15 +15,13 @@ export default (app: Router) => {
   const ctrl = Container.get(config.controllers.product.name) as IProductController;
 
   route.get('/byid/:id',
-    celebrate({
-      params: Joi.string().uuid()
-    }), (req, res, next) => ctrl.getProductById(req, res, next)
+    celebrate({params: Joi.string().uuid()}),
+    (req, res, next) => ctrl.getProductById(req, res, next)
   );
 
   route.get('/byname/:name',
-    celebrate({
-      params: Joi.string()
-    }), (req, res, next) => ctrl.getProductByName(req, res, next)
+    celebrate({params: Joi.string()}),
+    (req, res, next) => ctrl.getProductByName(req, res, next)
   );
 
   route.post('',

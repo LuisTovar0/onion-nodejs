@@ -1,0 +1,114 @@
+{
+  "info": {
+    "_postman_id": "983b7644-ce0e-414e-9900-496aaca6a2a3",
+    "name": "Product test",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get non existant product by name",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.environment.set('prodName',Math.random().toString(36).slice(2));"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Response status is Not Found', () => pm.response.to.have.status(404));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{url}}/api/product/byname?name={{prodName}}",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "api",
+            "product",
+            "byname"
+          ],
+          "query": [
+            {
+              "key": "name",
+              "value": "{{prodName}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create the product",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "const quant = Math.floor(Math.random() * 50);\r",
+              "pm.environment.set(\"prodQuant\", quant);"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Response status is Created', () => pm.response.to.have.status(201));\r",
+              "\r",
+              "const jsonResp = pm.response.json();\r",
+              "\r",
+              "pm.test('Product has correct name', () =>\r",
+              "    pm.expect(jsonResp.name).to\r",
+              "        .eql(pm.environment.get('prodName')));\r",
+              "\r",
+              "pm.test('Product has correct quantity', () =>\r",
+              "    pm.expect(jsonResp.quantity).to\r",
+              "        .eql(pm.environment.get('prodQuant')));\r",
+              "\r",
+              "pm.environment.set('prodId', jsonResp.domainId);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"{{prodName}}\",\r\n    \"quantity\": {{prodQuant}}\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{url}}/api/product",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "api",
+            "product"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

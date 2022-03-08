@@ -26,10 +26,10 @@ export default class Product extends AggregateRoot<PostProps> {
     if (!guardResult.succeeded) return Result.fail<Product>(guardResult.message)
 
     let nameRes = ProductName.create(dto.name);
-    if (!nameRes.isSuccess) throw new Error('Invalid product name: ' + nameRes.error);
+    if (!nameRes.isSuccess) return Result.fail<Product>('Invalid product name: ' + nameRes.error);
 
     let quantRes = ProductQuantity.create(dto.quantity);
-    if (!quantRes.isSuccess) throw new Error('Invalid product quantity: ' + quantRes.error);
+    if (!quantRes.isSuccess) return Result.fail<Product>('Invalid product quantity: ' + quantRes.error);
 
     const product = new Product({name: nameRes.getValue(), quantity: quantRes.getValue()}, id);
     return Result.ok<Product>(product);

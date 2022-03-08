@@ -5,52 +5,48 @@ export default abstract class BaseController {
   protected req: express.Request;
   protected res: express.Response;
 
-  public static jsonResponse(res: express.Response, code: number, message: string) {
+  public static messageResponse(res: express.Response, code: number, message: string) {
     return res.status(code).json({message})
   }
 
   public ok<T>(res: express.Response, dto?: T) {
-    if (!!dto) {
-      return res.status(200).json(dto);
-    } else {
-      return res.sendStatus(200);
-    }
+    return !!dto ? res.status(200).json(dto) : res.sendStatus(200);
   }
 
   public created<T>(res: express.Response, dto?: T) {
     return res.status(201).json(dto);
   }
 
-  public clientError(message?: string) {
-    return BaseController.jsonResponse(this.res, 400, message ? message : 'Unauthorized');
+  public badRequest(message?: string) {
+    return BaseController.messageResponse(this.res, 400, message ? message : "Bad Request");
   }
 
   public unauthorized(message?: string) {
-    return BaseController.jsonResponse(this.res, 401, message ? message : 'Unauthorized');
+    return BaseController.messageResponse(this.res, 401, message ? message : 'Unauthorized');
   }
 
   public paymentRequired(message?: string) {
-    return BaseController.jsonResponse(this.res, 402, message ? message : 'Payment required');
+    return BaseController.messageResponse(this.res, 402, message ? message : 'Payment required');
   }
 
   public forbidden(message?: string) {
-    return BaseController.jsonResponse(this.res, 403, message ? message : 'Forbidden');
+    return BaseController.messageResponse(this.res, 403, message ? message : 'Forbidden');
   }
 
   public notFound(message?: string) {
-    return BaseController.jsonResponse(this.res, 404, message ? message : 'Not found');
+    return BaseController.messageResponse(this.res, 404, message ? message : 'Not found');
   }
 
   public conflict(message?: string) {
-    return BaseController.jsonResponse(this.res, 409, message ? message : 'Conflict');
+    return BaseController.messageResponse(this.res, 409, message ? message : 'Conflict');
   }
 
   public tooMany(message?: string) {
-    return BaseController.jsonResponse(this.res, 429, message ? message : 'Too many requests');
+    return BaseController.messageResponse(this.res, 429, message ? message : 'Too many requests');
   }
 
   public todo() {
-    return BaseController.jsonResponse(this.res, 400, 'TODO');
+    return BaseController.messageResponse(this.res, 400, 'TODO');
   }
 
   public fail(error: Error | string) {

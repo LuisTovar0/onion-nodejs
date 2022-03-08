@@ -9,6 +9,7 @@ import IUpdateProductDto from "../dto/nonEntity/iUpdateProductDto";
 import IProductDto from '../dto/iProductDto';
 import IProductService from '../services/iServices/iProductService';
 import IProductController from "./iControllers/iProductController";
+import INoIdProductDto from "../dto/iNoIdDto/iNoIdProductDto";
 
 @Service()
 export default class ProductController extends BaseController implements IProductController {
@@ -42,8 +43,8 @@ export default class ProductController extends BaseController implements IProduc
 
   public async createProduct(req: Request, resp: Response, next: NextFunction) {
     try {
-      const productRes = await this.service.createProduct(req.body as IProductDto) as Result<IProductDto>;
-      if (!productRes.isSuccess) return resp.status(402).send();
+      const productRes = await this.service.createProduct(req.body as INoIdProductDto) as Result<IProductDto>;
+      if (!productRes.isSuccess) return this.badRequest(productRes.error.toString());
       return this.created(resp, productRes.getValue());
     } catch (e) {
       return next(e);

@@ -17,6 +17,7 @@ export default class ProductMapper implements IProductMapper {
     return {
       domainId: product.id.toString(),
       name: product.name.value,
+      quantity: product.quantity.value
     } as IProductDto;
   }
 

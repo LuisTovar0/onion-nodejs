@@ -9,12 +9,12 @@ const product = new Schema(
     },
     name: {
       type: String,
-      required: [true, 'The product name is missing.'],
+      required: [true, 'Persistence requires a product name.'],
       unique: true,
     },
     quantity: {
       type: Number,
-      required: [true, 'The product quantity is missing.'],
+      required: [true, 'Persistence requires a product quantity.'],
       index: true
     }
   }, {timestamps: true}
