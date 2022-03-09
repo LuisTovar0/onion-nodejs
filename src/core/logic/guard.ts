@@ -38,6 +38,11 @@ export class Guard {
       throw new ValidationError(`${argumentName} is not within range ${min} to ${max}.`);
   }
 
+  public static isInteger(n: number, argumentName: string) {
+    if (Number.isNaN(n) || !Number.isInteger(n))
+      throw new ValidationError(argumentName + ' is not an integer.');
+  }
+
   public static allInRange(numbers: number[], min: number, max: number, argumentName: string) {
     for (let num of numbers)
       this.inRange(num, min, max, argumentName);

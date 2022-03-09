@@ -10,6 +10,7 @@ interface ValueObjectProps {
  */
 
 export abstract class ValueObject<T extends ValueObjectProps> {
+
   public readonly props: T;
 
   protected constructor(props: T) {
@@ -17,12 +18,9 @@ export abstract class ValueObject<T extends ValueObjectProps> {
   }
 
   public equals(vo?: ValueObject<T>): boolean {
-    if (vo === null || vo === undefined) {
-      return false;
-    }
-    if (vo.props === undefined) {
-      return false;
-    }
-    return shallowEqual(this.props, vo.props)
+    if (vo === null || vo === undefined) return false;
+    if (vo.props === undefined) return false;
+    return shallowEqual(this.props, vo.props);
   }
+
 }

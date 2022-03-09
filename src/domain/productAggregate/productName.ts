@@ -12,8 +12,8 @@ export default class ProductName extends ValueObject<ProductNameProps> {
   }
 
   public static create(name: string): ProductName {
-    Guard.againstNullOrUndefined(name, 'name');
-    Guard.inRange(name.length, 1, 10000, name);
+    Guard.againstNullOrUndefined(name, 'product name');
+    Guard.inRange(name.length, 1, 200, name);
     return new ProductName({value: name});
   }
 
