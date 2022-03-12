@@ -1,20 +1,21 @@
-import ProductMapper from "../../../src/mappers/productMapper";
-import UniqueEntityID from "../../../src/core/domain/uniqueEntityID";
-import Product from "../../../src/domain/productAggregate/product";
-import * as assert from "assert";
-import ValidationError from "../../../src/core/logic/validationError";
-import IProductDto from "../../../src/dto/iProductDto";
-import IProductDataModel from "../../../src/db/dataModel/iProductDataModel";
 import {describe} from "mocha";
+import * as assert from "assert";
 
-describe('Integration: ProductMapper + (Product + ProductName + ProductQuantity)', () => {
+import UniqueEntityID from "../../../src/core/domain/uniqueEntityID";
+import ValidationError from "../../../src/core/logic/validationError";
+import IProductDataModel from "../../../src/db/dataModel/iProductDataModel";
+import Product from "../../../src/domain/productAggregate/product";
+import IProductDto from "../../../src/dto/iProductDto";
+import ProductMapper from "../../../src/mappers/productMapper";
+
+describe('Integration: ProductMapper + Product aggregate', () => {
 
   const mapper = new ProductMapper();
   const id = new UniqueEntityID();
   const name = "Banana";
   const quantity = 10;
-  const validDto = {domainId: id.getValue(), name: name, quantity: quantity} as IProductDto;
-  const validDataModel = {domainId: id.getValue(), name: name, quantity: quantity} as IProductDataModel;
+  const validDto: IProductDto = {domainId: id.getValue(), name: name, quantity: quantity};
+  const validDataModel: IProductDataModel = {domainId: id.getValue(), name: name, quantity: quantity};
   const validProd = Product.create({name: name, quantity: quantity}, id);
 
   describe('domainToDTO method', () => {

@@ -5,9 +5,9 @@ import UniqueEntityID from "../../../../src/core/domain/uniqueEntityID";
 import ValidationError from "../../../../src/core/logic/validationError";
 import Product from "../../../../src/domain/productAggregate/product";
 
-describe('Unit: Product + ProductName + ProductQuantity', () => {
+describe('Unit: Product aggregate', () => {
 
-  const validName = "Avocado";
+  const validName = "Avocados";
   const validQuantity = 1234;
   const validDto = {name: validName, quantity: validQuantity};
 

@@ -28,12 +28,12 @@ export default class ProductRepo extends BaseRepo<IProductDataModel> implements 
 
   public async getById(productId: string): Promise<IProductDto> {
     const dataModel = await this.findByDomainId(productId);
-    return dataModel == null ? null : this.mapper.dataModelToDTO(dataModel);
+    return dataModel === null ? null : this.mapper.dataModelToDTO(dataModel);
   }
 
-  public async findByName(productName: string): Promise<IProductDto> {
+  public async getByName(productName: string): Promise<IProductDto> {
     const productDataModel = await this.productSchema.findOne({name: productName});
-    return productDataModel == null ? null : this.mapper.dataModelToDTO(productDataModel);
+    return productDataModel === null ? null : this.mapper.dataModelToDTO(productDataModel);
   }
 
 }

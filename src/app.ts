@@ -9,13 +9,11 @@ async function startServer() {
 
   await require('./core/loaders').default(app);
 
-  app.listen(config.port, () => {
-    Logger.info('\n' +
-      '\t#####################################\n' +
-      '\t🛡️  Server listening on port: ' + config.port + ' 🛡️ \n' +
-      '\t#####################################\n'
-    );
-  }).on('error', err => {
+  app.listen(config.port, () => Logger.info(`
+         #####################################
+         🛡️  Server listening on port: ${config.port} 🛡️ 
+         #####################################
+  `)).on('error', err => {
     Logger.error(err);
     process.exit(1);
     return;

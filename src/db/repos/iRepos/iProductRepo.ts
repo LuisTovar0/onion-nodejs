@@ -6,6 +6,6 @@ export default interface IProductRepo {
 
   getById(id: string): Promise<IProductDto>;
 
-  findByName(productName: string): Promise<IProductDto>;
+  getByName(productName: string): Promise<IProductDto>;
 
 }

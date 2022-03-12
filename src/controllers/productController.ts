@@ -26,7 +26,7 @@ export default (app: Router) => {
     async function getProductById(req, res, next) {
       const ctrl = new BaseController(req, res, next);
       try {
-        const product = await service.getProductById(req.params.id) as IProductDto;
+        const product: IProductDto = await service.getProductById(req.params.id);
         return ctrl.ok(product);
       } catch (e) {
         return ctrl.handleException(e);
@@ -43,7 +43,7 @@ export default (app: Router) => {
     async function getProductByName(req, res, next) {
       const ctrl = new BaseController(req, res, next);
       try {
-        const product = await this.service.getProductByName(req.params.name) as IProductDto;
+        const product: IProductDto = await this.service.getProductByName(req.params.name);
         return ctrl.ok(product);
       } catch (e) {
         return this.handleException(e);
@@ -61,7 +61,7 @@ export default (app: Router) => {
     async function createProduct(req: Request, res: Response, next: NextFunction) {
       const ctrl = new BaseController(req, res, next);
       try {
-        const product = await this.service.createProduct(req.body as INoIdProductDto) as IProductDto;
+        const product: IProductDto = await this.service.createProduct(req.body as INoIdProductDto);
         return ctrl.created(product);
       } catch (e) {
         return ctrl.handleException(e);
@@ -80,7 +80,7 @@ export default (app: Router) => {
     async function updateProduct(req, res, next) {
       const ctrl = new BaseController(req, res, next);
       try {
-        const productRes = await this.service.updateProduct(req.body as IUpdateProductDto) as IProductDto;
+        const productRes: IProductDto = await this.service.updateProduct(req.body as IUpdateProductDto);
         return ctrl.ok(productRes);
       } catch (e) {
         return ctrl.handleException(e);
