@@ -1,10 +1,9 @@
 import {NextFunction, Request, Response} from 'express';
-
+import Logger from "../loaders/logger";
 import NotFoundError from "../logic/notFoundError";
 import ValidationError from "../logic/validationError";
-import Logger from "../loaders/logger";
 
-export default class BaseController {
+export class BaseController {
 
   constructor(
     private req: Request,
@@ -14,22 +13,15 @@ export default class BaseController {
   }
 
   public handleException(e: Error) {
-    if (e instanceof NotFoundError)
-      return this.notFound(e.message);
-    if (e instanceof ValidationError)
-      return this.badRequest(e.message);
-    return this.next(e);
+    return StaticController.handleException(this.res, this.next, e);
   }
 
-  private response<T>(code: number, content: T | string) {
-    let body;
-    if (content as T) body = content;
-    else body = {message: content};
-    return this.res.status(code).json(body);
+  public response<T>(code: number, content: T | string) {
+    return StaticController.response(this.res, code, content);
   }
 
   public ok<T>(dto?: T) {
-    return this.response(200, dto || "OK");
+    return StaticController.ok(this.res, dto);
   }
 
   public created<T>(dto?: T) {
@@ -41,7 +33,7 @@ export default class BaseController {
   }
 
   public badRequest(message?: string) {
-    return this.response(400, message || "Bad Request");
+    return StaticController.badRequest(this.res, message);
   }
 
   public unauthorized(message?: string) {
@@ -57,7 +49,7 @@ export default class BaseController {
   }
 
   public notFound(message?: string) {
-    return this.response(404, message || 'Not found');
+    return StaticController.notFound(this.res, message);
   }
 
   public notImplemented() {
@@ -68,4 +60,49 @@ export default class BaseController {
     Logger.error(error);
     return this.response(500, error.toString());
   }
+}
+
+export class StaticController {
+
+  public static async simpleController(res: Response, next: NextFunction,
+                                       call: () => any, retCode: <T>(res: Response, content?: T | string) => Response) {
+    try {
+      const res = await call();
+      return retCode(res);
+    } catch (e) {
+      return StaticController.handleException(res, next, e);
+    }
+  }
+
+  public static handleException(res: Response, next: NextFunction, e: Error) {
+    if (e instanceof NotFoundError)
+      return StaticController.notFound(res, e.message);
+    if (e instanceof ValidationError)
+      return StaticController.badRequest(res, e.message);
+    return next(e);
+  }
+
+  public static response<T>(res: Response, code: number, content: T | string) {
+    let body;
+    if (content as T) body = content;
+    else body = {message: content};
+    return res.status(code).json(body);
+  }
+
+  public static ok<T>(res: Response, dto?: T) {
+    return this.response(res, 200, dto || "OK");
+  }
+
+  public static created<T>(res: Response, dto?: T) {
+    return StaticController.response(res, 201, dto || "Created");
+  }
+
+  public static badRequest(res: Response, message?: string) {
+    return StaticController.response(res, 400, message || "Bad Request");
+  }
+
+  public static notFound(res: Response, message?: string) {
+    return StaticController.response(res, 404, message || 'Not Found');
+  }
+
 }

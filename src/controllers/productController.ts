@@ -4,7 +4,7 @@ import {Container} from 'typedi';
 
 import config from "../../config";
 import IProductDto from "../dto/iProductDto";
-import BaseController from "../core/infra/baseController";
+import {BaseController, StaticController} from "../core/infra/baseController";
 import IProductService from "../services/iServices/iProductService";
 import INoIdProductDto from "../dto/iNoIdDto/iNoIdProductDto";
 import IUpdateProductDto from "../dto/nonEntity/iUpdateProductDto";
@@ -24,13 +24,9 @@ export default (app: Router) => {
       }
     }),
     async function getProductById(req, res, next) {
-      const ctrl = new BaseController(req, res, next);
-      try {
-        const product: IProductDto = await service.getProductById(req.params.id);
-        return ctrl.ok(product);
-      } catch (e) {
-        return ctrl.handleException(e);
-      }
+      return await StaticController.simpleController(res, next,
+        async () => await service.getProductById(req.params.id),
+        StaticController.ok);
     }
   );
 
@@ -41,13 +37,9 @@ export default (app: Router) => {
       }
     }),
     async function getProductByName(req, res, next) {
-      const ctrl = new BaseController(req, res, next);
-      try {
-        const product: IProductDto = await service.getProductByName(req.params.name);
-        return ctrl.ok(product);
-      } catch (e) {
-        return ctrl.handleException(e);
-      }
+      return await StaticController.simpleController(res, next,
+        async () => await service.getProductByName(req.params.name),
+        StaticController.ok);
     }
   );
 
@@ -59,13 +51,9 @@ export default (app: Router) => {
       })
     }),
     async function createProduct(req: Request, res: Response, next: NextFunction) {
-      const ctrl = new BaseController(req, res, next);
-      try {
-        const product: IProductDto = await service.createProduct(req.body as INoIdProductDto);
-        return ctrl.created(product);
-      } catch (e) {
-        return ctrl.handleException(e);
-      }
+      return await StaticController.simpleController(res, next,
+        async () => await service.createProduct(req.body as INoIdProductDto),
+        StaticController.created);
     }
   );
 
@@ -78,12 +66,13 @@ export default (app: Router) => {
       }),
     }),
     async function updateProduct(req, res, next) {
-      const ctrl = new BaseController(req, res, next);
+      // this is not a complex example, but it shows how the more complex controllers can be made
+      const controller = new BaseController(req, res, next);
       try {
         const productRes: IProductDto = await service.updateProduct(req.body as IUpdateProductDto);
-        return ctrl.ok(productRes);
+        return controller.ok(productRes);
       } catch (e) {
-        return ctrl.handleException(e);
+        return controller.handleException(e);
       }
     }
   );
