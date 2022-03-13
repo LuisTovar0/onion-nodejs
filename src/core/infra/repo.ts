@@ -8,7 +8,7 @@ export default class BaseRepo<TDataModel extends DataModel> {
   constructor(protected productSchema: Model<TDataModel>) {
   }
 
-  protected async findByDomainId(id: string): Promise<TDataModel> {
+  protected async findByDomainId(id: string): Promise<TDataModel | null> {
     return this.productSchema.findOne({domainId: id});
   }
 

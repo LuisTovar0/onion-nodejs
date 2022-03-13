@@ -7,6 +7,7 @@ import IProductDataModel from "../../../src/db/dataModel/iProductDataModel";
 import Product from "../../../src/domain/productAggregate/product";
 import IProductDto from "../../../src/dto/iProductDto";
 import ProductMapper from "../../../src/mappers/productMapper";
+import {badNum, badStr} from "../../constants";
 
 describe('Integration: ProductMapper + Product aggregate', () => {
 
@@ -30,7 +31,7 @@ describe('Integration: ProductMapper + Product aggregate', () => {
   describe('dtoToDomain method', () => {
     it('throws ValidationError if any data is invalid', () => {
       assert.throws(() =>
-        mapper.dtoToDomain({domainId: "1234", name: null, quantity: null}), ValidationError);
+        mapper.dtoToDomain({domainId: "1234", name: badStr, quantity: badNum}), ValidationError);
     });
 
     it('has all the given data if it\'s valid', () => {

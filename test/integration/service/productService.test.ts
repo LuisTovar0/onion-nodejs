@@ -12,26 +12,19 @@ import ProductMapper from "../../../src/mappers/productMapper";
 import ValidationError from "../../../src/core/logic/validationError";
 import NotFoundError from "../../../src/core/logic/notFoundError";
 import IUpdateProductDto from "../../../src/dto/nonEntity/iUpdateProductDto";
+import {badNum, badProd, badStr} from "../../constants";
 
 describe('Integration: ProductService + Product aggregate + ProductMapper', () => {
 
-  const assertThrows = async (call, errorType?) => {
+  const assertThrows = async (call: { (): Promise<IProductDto> }, errorType?: typeof NotFoundError | undefined) => {
     try {
       await call();
       assert.fail();
     } catch (e) {
-      if (e.name === 'AssertionError')
-        assert.fail('Should have thrown error');
-
-      if (errorType !== undefined)
-        assert.equal(e.name, errorType.name);
+      if (e.name === 'AssertionError') assert.fail('Should have thrown error');
+      if (errorType !== undefined) assert.equal(e.name, errorType.name);
     }
   };
-
-  // undefined values
-  const badProd = null as unknown as IProductDto;
-  const badStr = null as unknown as string;
-  const badNum = null as unknown as number;
 
   // as suggested by the description, we won't be simulating or testing the Product aggregate
   // or ProductMapper, but we're doubling ProductRepo, as it is more prone to change.
@@ -52,7 +45,7 @@ describe('Integration: ProductService + Product aggregate + ProductMapper', () =
 
   describe('getProductById method', () => {
     it('returns a product DTO if it exists', async () => {
-      repoStub.getById.withArgs(id.getValue()).returns(dto);
+      repoStub.getById.withArgs(id.getValue()).returns(Promise.resolve(dto));
       const res = await serviceWithStub.getProductById(id.getValue());
       assert.equal(res.domainId, id.getValue());
       assert.equal(res.name, name);
@@ -60,7 +53,7 @@ describe('Integration: ProductService + Product aggregate + ProductMapper', () =
     });
 
     it('throws NotFoundError if the product is not found', async () => {
-      repoStub.getById.withArgs(id.getValue()).returns(null);
+      repoStub.getById.withArgs(id.getValue()).throws(new NotFoundError('any'));
       await assertThrows(async () =>
           await serviceWithStub.getProductById(id.getValue()),
         NotFoundError);
@@ -74,7 +67,7 @@ describe('Integration: ProductService + Product aggregate + ProductMapper', () =
 
   describe('getProductByName method', () => {
     it('returns a product DTO if it exists', async () => {
-      repoStub.getByName.withArgs(name).returns(dto);
+      repoStub.getByName.withArgs(name).returns(Promise.resolve(dto));
       const res = await serviceWithStub.getProductByName(name);
       assert.equal(res.domainId, id.getValue());
       assert.equal(res.name, name);
@@ -82,7 +75,7 @@ describe('Integration: ProductService + Product aggregate + ProductMapper', () =
     });
 
     it('throws NotFoundError if the product is not found', async () => {
-      repoStub.getByName.withArgs(name).returns(null);
+      repoStub.getByName.withArgs(name).throws(new NotFoundError('any'));
       await assertThrows(async () =>
           await serviceWithStub.getProductByName(name),
         NotFoundError);
@@ -117,7 +110,7 @@ describe('Integration: ProductService + Product aggregate + ProductMapper', () =
 
   describe('updateProduct method', () => {
     it('updates both the name and quantity', async () => {
-      repoStub.getById.withArgs(id.getValue()).returns(dto);
+      repoStub.getById.withArgs(id.getValue()).returns(Promise.resolve(dto));
       const newName = "Apples";
       const newQuant = 25;
       const newDto: IUpdateProductDto = {
@@ -125,7 +118,7 @@ describe('Integration: ProductService + Product aggregate + ProductMapper', () =
         name: newName,
         quantity: newQuant
       };
-      repoStub.save.withArgs(newDto).returns(Promise.resolve(newDto));
+      repoStub.save.withArgs(newDto as IProductDto).returns(Promise.resolve(newDto as IProductDto));
 
       const res = await serviceWithStub.updateProduct(newDto);
       assert.equal(res.domainId, id.getValue());
@@ -144,7 +137,7 @@ describe('Integration: ProductService + Product aggregate + ProductMapper', () =
         domainId: id.getValue(),
         name: newName
       };
-      repoStub.getById.withArgs(id.getValue()).returns(dto);
+      repoStub.getById.withArgs(id.getValue()).returns(Promise.resolve(dto));
       repoStub.save.withArgs(newDto).returns(Promise.resolve(newDto));
 
       const res = await serviceWithStub.updateProduct(updateDto);
@@ -164,7 +157,7 @@ describe('Integration: ProductService + Product aggregate + ProductMapper', () =
         name: name,
         quantity: newQuant
       };
-      repoStub.getById.withArgs(id.getValue()).returns(dto);
+      repoStub.getById.withArgs(id.getValue()).returns(Promise.resolve(dto));
       repoStub.save.withArgs(newDto).returns(Promise.resolve(newDto));
 
       const res = await serviceWithStub.updateProduct(updateDto);
@@ -174,7 +167,7 @@ describe('Integration: ProductService + Product aggregate + ProductMapper', () =
     });
 
     it('throws ValidationError if any info is invalid', async () => {
-      repoStub.getById.withArgs(id.getValue()).returns(dto);
+      repoStub.getById.withArgs(id.getValue()).returns(Promise.resolve(dto));
       await assertThrows(async () =>
           await serviceWithStub.updateProduct({
             domainId: id.getValue(),
@@ -185,7 +178,7 @@ describe('Integration: ProductService + Product aggregate + ProductMapper', () =
     });
 
     it('throws NotFoundError if ID is not found', async () => {
-      repoStub.getById.withArgs(id.getValue()).returns(null);
+      repoStub.getById.withArgs(id.getValue()).returns(Promise.resolve(badProd));
       await assertThrows(async () => await serviceWithStub.updateProduct(dto), NotFoundError);
     });
   });

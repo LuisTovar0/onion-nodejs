@@ -1,13 +1,14 @@
 import * as assert from "assert";
 import ProductQuantity from "../../../../src/domain/productAggregate/productQuantity";
 import ValidationError from "../../../../src/core/logic/validationError";
+import {badNum} from "../../../constants";
 
 describe('Unit: ProductQuantity', () => {
 
   describe('create - static method', () => {
     it('throws ValidationError if quantity is null or undifined', () => {
-      assert.throws(() => ProductQuantity.create(null), ValidationError);
-      assert.throws(() => ProductQuantity.create(undefined), ValidationError);
+      assert.throws(() => ProductQuantity.create(badNum), ValidationError);
+      assert.throws(() => ProductQuantity.create(undefined as unknown as number), ValidationError);
     });
 
     it('throws ValidationError if quantity is not integer', () =>

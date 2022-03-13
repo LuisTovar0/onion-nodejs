@@ -7,6 +7,7 @@ import IProductDto from '../../dto/iProductDto';
 import IProductDataModel from '../dataModel/iProductDataModel';
 import IProductRepo from "./iRepos/iProductRepo";
 import IProductMapper from "../../mappers/iMappers/iProductMapper";
+import NotFoundError from "../../core/logic/notFoundError";
 
 @Service()
 export default class ProductRepo extends BaseRepo<IProductDataModel> implements IProductRepo {
@@ -28,12 +29,16 @@ export default class ProductRepo extends BaseRepo<IProductDataModel> implements 
 
   public async getById(productId: string): Promise<IProductDto> {
     const dataModel = await this.findByDomainId(productId);
-    return dataModel === null ? null : this.mapper.dataModelToDTO(dataModel);
+    if (dataModel === null)
+      throw new NotFoundError('Product with ID "' + productId + '" does not exist.');
+    return this.mapper.dataModelToDTO(dataModel);
   }
 
   public async getByName(productName: string): Promise<IProductDto> {
     const productDataModel = await this.productSchema.findOne({name: productName});
-    return productDataModel === null ? null : this.mapper.dataModelToDTO(productDataModel);
+    if (productDataModel === null)
+      throw new NotFoundError('Product with name "' + productName + '" does not exist.');
+    return this.mapper.dataModelToDTO(productDataModel);
   }
 
 }

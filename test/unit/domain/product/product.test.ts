@@ -4,6 +4,7 @@ import {validate} from "uuid";
 import UniqueEntityID from "../../../../src/core/domain/uniqueEntityID";
 import ValidationError from "../../../../src/core/logic/validationError";
 import Product from "../../../../src/domain/productAggregate/product";
+import {badNum, badStr} from "../../../constants";
 
 describe('Unit: Product aggregate', () => {
 
@@ -13,9 +14,12 @@ describe('Unit: Product aggregate', () => {
 
   describe('Product.create', () => {
     it('throws ValidationError if name is null', () =>
-      assert.throws(() => Product.create({name: null, quantity: validQuantity}), ValidationError));
+      assert.throws(() => Product.create({name: badStr, quantity: validQuantity}), ValidationError));
     it('throws ValidationError if name is undefined', () =>
-      assert.throws(() => Product.create({name: undefined, quantity: validQuantity}), ValidationError));
+      assert.throws(() => Product.create({
+        name: undefined as unknown as string,
+        quantity: validQuantity
+      }), ValidationError));
     it('throws ValidationError if name is empty', () =>
       assert.throws(() => Product.create({name: '', quantity: validQuantity}), ValidationError));
     it('has right name if it\'s valid', () => {
@@ -24,9 +28,12 @@ describe('Unit: Product aggregate', () => {
     });
 
     it('throws ValidationError if quantity is null', () =>
-      assert.throws(() => Product.create({name: validName, quantity: null}), ValidationError));
+      assert.throws(() => Product.create({name: validName, quantity: badNum}), ValidationError));
     it('throws ValidationError if quantity is undefined', () =>
-      assert.throws(() => Product.create({name: validName, quantity: undefined}), ValidationError));
+      assert.throws(() => Product.create({
+        name: validName,
+        quantity: undefined as unknown as number
+      }), ValidationError));
     it('throws ValidationError if quantity is negative', () =>
       assert.throws(() => Product.create({name: validName, quantity: -1}), ValidationError));
     it('throws ValidationError if quantity is not an integer', () =>

@@ -3,13 +3,10 @@ import dotenv from 'dotenv';
 // Set the NODE_ENV to 'development' by default
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-const envFound = dotenv.config();
-if (!envFound) {
-  throw new Error("⚠️  Couldn't find .env file  ⚠️");
-}
+if (!dotenv.config()) throw new Error("⚠️  Couldn't find .env file  ⚠️");
 
 export default {
-  port: parseInt(process.env.PORT, 10) || 3000,
+  port: process.env.PORT || 3000,
 
   databaseURL: process.env.MONGODB_URI || "mongodb://localhost:27017/test",
 

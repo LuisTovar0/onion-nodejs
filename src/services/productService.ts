@@ -24,17 +24,11 @@ export default class ProductService implements IProductService {
   }
 
   public async getProductById(productId: string): Promise<IProductDto> {
-    const product = await this.repo.getById(productId);
-    if (product === null)
-      throw new NotFoundError('Product with ID ' + productId + ' does not exist.');
-    return product;
+    return await this.repo.getById(productId);
   }
 
   public async getProductByName(productName: string): Promise<IProductDto> {
-    const product = await this.repo.getByName(productName);
-    if (product === null)
-      throw new NotFoundError('Product with name "' + productName + '" does not exist.');
-    return product;
+    return await this.repo.getByName(productName);
   }
 
   async createProduct(productDto: INoIdProductDto): Promise<IProductDto> {
