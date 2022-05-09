@@ -6,11 +6,11 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 if (!dotenv.config()) throw new Error("⚠️  Couldn't find .env file  ⚠️");
 
 export default {
-  port: process.env.PORT || 3000,
+  port: process.env.PORT || 45678,
 
   databaseURL: process.env.MONGODB_URI || "mongodb://localhost:27017/test",
 
-  api: {prefix: '/controllers',},
+  api: {prefix: '/api',},
 
   repos: {
     product: {

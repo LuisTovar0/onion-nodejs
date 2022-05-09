@@ -3,17 +3,19 @@ import {celebrate, Joi} from 'celebrate';
 import {Container} from 'typedi';
 
 import config from "../../config";
-import IProductDto from "../dto/iProductDto";
 import {BaseController, StaticController} from "../core/infra/baseController";
-import IProductService from "../services/iServices/iProductService";
 import INoIdProductDto from "../dto/iNoIdDto/iNoIdProductDto";
 import IUpdateProductDto from "../dto/nonEntity/iUpdateProductDto";
+import IProductDto from "../dto/iProductDto";
+import IProductService from "../services/iServices/iProductService";
 
 const route = Router();
 
 export default (app: Router) => {
 
   app.use('/product', route);
+
+  route.get('', (req, res) => StaticController.ok(res, 'Hello World!'));
 
   const service = Container.get(config.services.product.name) as IProductService;
 
@@ -24,21 +26,20 @@ export default (app: Router) => {
       }
     }),
     async function getProductById(req, res, next) {
-      return await StaticController.simpleController(res, next,
-        async () => await service.getProductById(req.params.id),
-        StaticController.ok);
+      if (req.query.id)
+        return await StaticController.simpleController(res, next,
+          async () => await service.getProductById((req.query.id || '').toString()),
+          StaticController.ok);
     }
   );
 
-  route.get('/byname/:name',
-    celebrate({
-      params: {
-        name: Joi.string()
-      }
-    }),
+  route.get('/byname',
     async function getProductByName(req, res, next) {
+      if (req.query.name === undefined)
+        return StaticController.badRequest(res, "'name' parameter not defined in the request.");
+      const name = req.query.name.toString();
       return await StaticController.simpleController(res, next,
-        async () => await service.getProductByName(req.params.name),
+        async () => await service.getProductByName(name),
         StaticController.ok);
     }
   );

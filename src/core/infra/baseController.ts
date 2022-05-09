@@ -64,13 +64,13 @@ export class BaseController {
 
 export class StaticController {
 
-  public static async simpleController(res: Response, next: NextFunction,
-                                       call: () => any, retCode: <T>(res: Response, content?: T | string) => Response) {
+  public static async simpleController(resp: Response, next: NextFunction,
+                                       call: () => any, retCode: <T>(resp: Response, content?: T | string) => Response) {
     try {
       const res = await call();
-      return retCode(res);
+      return retCode(resp, res);
     } catch (e) {
-      return StaticController.handleException(res, next, e);
+      return StaticController.handleException(resp, next, e);
     }
   }
 
@@ -90,7 +90,7 @@ export class StaticController {
   }
 
   public static ok<T>(res: Response, dto?: T) {
-    return this.response(res, 200, dto || "OK");
+    return StaticController.response(res, 200, dto || "OK");
   }
 
   public static created<T>(res: Response, dto?: T) {

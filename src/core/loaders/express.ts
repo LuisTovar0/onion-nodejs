@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import routes from '../../controllers';
 import config from '../../../config';
+import {StaticController} from "../infra/baseController";
 
 export default (app: Application) => {
   /**
@@ -29,5 +30,7 @@ export default (app: Application) => {
 
   // Load API routes
   app.use(config.api.prefix, routes());
+
+  app.get('*', (req, res) => StaticController.notFound(res, "Route not found: " + req.url));
 
 };
