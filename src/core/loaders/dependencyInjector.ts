@@ -1,14 +1,14 @@
 import {Container} from 'typedi';
 import Logger from './logger';
 
-interface InjectablesAndSchemas {
+export interface InjectablesAndSchemas {
   schemas: NamePath[],
   mappers: NamePath[],
   repos: NamePath[],
   services: NamePath[],
 }
 
-interface NamePath {
+export interface NamePath {
   name: string,
   path: string
 }

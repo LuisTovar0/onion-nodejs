@@ -2,7 +2,8 @@
   "name": "onion-nodejs",
   "version": "0.0.0",
   "scripts": {
-    "start": "nodemon",
+    "start": "node --loader ts-node/esm ./src/app.ts",
+    "dev": "nodemon",
     "test": "mocha -r ts-node/register 'test/unit/**/*.test.ts' 'test/integration/**/*.test.ts'"
   },
   "dependencies": {
