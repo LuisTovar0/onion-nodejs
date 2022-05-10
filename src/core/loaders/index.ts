@@ -10,12 +10,7 @@ export default async (expressApp: Application) => {
   Logger.info('🤙 DB loaded and connected!');
 
   // turning each dependency set (repos,services,mappers,schemas) from config into an iterable
-  await setUpDependencyInjections({
-    schemas: config.schemas,
-    mappers: config.mappers,
-    repos: config.repos,
-    services: config.services
-  });
+  await setUpDependencyInjections(config.deps);
   Logger.info('😎 All dependencies are loaded');
 
   await expressLoader(expressApp);

@@ -13,9 +13,9 @@ import NotFoundError from "../../core/logic/notFoundError";
 export default class ProductRepo extends BaseRepo<IProductDataModel> implements IProductRepo {
 
   constructor(
-    @Inject(config.mappers.product.name)
+    @Inject(config.deps.mappers.product.name)
     private mapper: IProductMapper,
-    @Inject(config.schemas.product.name)
+    @Inject(config.deps.schemas.product.name)
       productSchema: Model<IProductDataModel>
   ) {
     super(productSchema);

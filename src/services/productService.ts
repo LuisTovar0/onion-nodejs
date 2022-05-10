@@ -16,9 +16,9 @@ import UniqueEntityID from "../core/domain/uniqueEntityID";
 export default class ProductService implements IProductService {
 
   constructor(
-    @Inject(config.repos.product.name)
+    @Inject(config.deps.repos.product.name)
     private repo: IProductRepo,
-    @Inject(config.mappers.product.name)
+    @Inject(config.deps.mappers.product.name)
     private mapper: IProductMapper
   ) {
   }

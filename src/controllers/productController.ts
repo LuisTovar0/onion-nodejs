@@ -17,7 +17,7 @@ export default (app: Router) => {
 
   route.get('', (req, res) => StaticController.ok(res, 'Hello World!'));
 
-  const service = Container.get(config.services.product.name) as IProductService;
+  const service = Container.get(config.deps.services.product.name) as IProductService;
 
   route.get('/byid/:id',
     celebrate({
