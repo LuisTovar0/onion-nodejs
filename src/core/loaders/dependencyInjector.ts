@@ -2,10 +2,14 @@ import {Container} from 'typedi';
 import Logger from './logger';
 
 export interface InjectablesAndSchemas {
-  schemas: any,
-  mappers: any,
-  repos: any,
-  services: any
+  schemas: NamePathMap,
+  mappers: NamePathMap,
+  repos: NamePathMap,
+  services: NamePathMap
+}
+
+export interface NamePathMap {
+  [k: string]: NamePath;
 }
 
 export interface NamePath {
@@ -34,8 +38,7 @@ export default (depNamesPaths: InjectablesAndSchemas) => {
       depNamesPaths.repos, // depend on mappers
       depNamesPaths.services// depend on repos and on each other (must be ordered)
     ].forEach((deps) => {
-      Object.entries(deps).forEach(([, val]) => {
-        const dep = <NamePath>val;
+      Object.entries(deps).forEach(([, dep]) => {
         // load the @Service() class by its path
         let class_ = require(dep.path).default;
         // create/get the instance of the @Service() class
