@@ -50,9 +50,11 @@ export default (depNamesPaths: InjectablesAndSchemas) => {
     });
 
   } catch (e) {
-    Logger.error(`🔥 Error on dependency injector loader!
-If the failing class has dependencies, those must be set up first in the Container, so make sure the definitions in \
-your config.ts are correctly ordered. Also, might not be the problem, but classes obviously can't have mutual dependency.`);
+    Logger.error(`🔥 Error on dependency injector loader! Potential causes:
+  - The failing class has Type errors.
+  - If the failing class has dependencies, those must be set up first in the Container. With this in mind, make sure the \
+definitions in your config.ts are correctly ordered.
+  - Classes obviously can't have mutual dependency.`);
     throw e;
   }
 };

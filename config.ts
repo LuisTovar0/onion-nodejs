@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 
 // Set the NODE_ENV to 'development' by default
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+process.env.NODE_ENV ??= 'development';
 
 if (!dotenv.config()) throw new Error("⚠️  Couldn't find .env file  ⚠️");
 
