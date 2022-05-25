@@ -1,7 +1,7 @@
 import expressLoader from './express';
 import setUpDependencyInjections from './dependencyInjector';
 import mongooseLoader from "./mongoose";
-import config from '../../../config';
+import config from '../../config';
 import Logger from "./logger";
 import {Application} from 'express';
 

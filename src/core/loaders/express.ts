@@ -2,7 +2,7 @@ import {Application} from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import routes from '../../controllers';
-import config from '../../../config';
+import config from '../../config';
 import {StaticController} from "../infra/baseController";
 
 export default (app: Application) => {

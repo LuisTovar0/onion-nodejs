@@ -1,6 +1,6 @@
 import {Inject, Service} from 'typedi';
 
-import config from "../../config";
+import config from "../config";
 
 import IProductRepo from '../db/repos/iRepos/iProductRepo';
 import Product from '../domain/productAggregate/product';

@@ -1,7 +1,7 @@
 import {Model} from 'mongoose';
 import {Inject, Service} from 'typedi';
 
-import config from "../../../config";
+import config from "../../config";
 import BaseRepo from "../../core/infra/repo";
 import IProductDto from '../../dto/iProductDto';
 import IProductDataModel from '../dataModel/iProductDataModel';
