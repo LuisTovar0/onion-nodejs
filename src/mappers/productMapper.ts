@@ -9,9 +9,6 @@ import IProductMapper from "./iMappers/iProductMapper";
 @Service()
 export default class ProductMapper implements IProductMapper {
 
-  constructor() {
-  }
-
   public domainToDTO(product: Product): IProductDto {
     return {
       domainId: product.id.toString(),

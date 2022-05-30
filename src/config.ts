@@ -1,9 +1,11 @@
 import dotenv from 'dotenv';
+import logger from "./core/loaders/logger";
 
-// Set the NODE_ENV to 'development' by default
-process.env.NODE_ENV ??= 'development';
-
-if (!dotenv.config()) throw new Error("⚠️  Couldn't find .env file  ⚠️");
+if (dotenv.config({path: `.env`}).error) {
+  logger.info(`⚠ You should create our own .env file. Using example.env now.`);
+  if (dotenv.config({path: `example.env`}).error)
+    throw new Error("⚠️ Couldn't find .env file ⚠️");
+}
 
 export default {
   port: process.env.PORT || 45678,
@@ -29,12 +31,6 @@ export default {
       product: {
         name: 'ProductMapper',
         path: '../../mappers/productMapper'
-      }
-    },
-    schemas: {
-      product: {
-        name: 'ProductSchema',
-        path: '../../db/schemas/productSchema',
       }
     }
   }

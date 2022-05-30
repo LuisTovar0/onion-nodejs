@@ -1,4 +1,3 @@
-import {Model} from 'mongoose';
 import {Inject, Service} from 'typedi';
 
 import config from "../../config";
@@ -8,6 +7,7 @@ import IProductDataModel from '../dataModel/iProductDataModel';
 import IProductRepo from "./iRepos/iProductRepo";
 import IProductMapper from "../../mappers/iMappers/iProductMapper";
 import NotFoundError from "../../core/logic/notFoundError";
+import productSchema from "../schemas/productSchema";
 
 @Service()
 export default class ProductRepo extends BaseRepo<IProductDataModel> implements IProductRepo {
@@ -15,8 +15,6 @@ export default class ProductRepo extends BaseRepo<IProductDataModel> implements 
   constructor(
     @Inject(config.deps.mappers.product.name)
     private mapper: IProductMapper,
-    @Inject(config.deps.schemas.product.name)
-      productSchema: Model<IProductDataModel>
   ) {
     super(productSchema);
   }

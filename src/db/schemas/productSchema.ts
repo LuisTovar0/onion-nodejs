@@ -1,7 +1,7 @@
 import {model, Schema} from 'mongoose';
 import IProductDataModel from '../dataModel/iProductDataModel';
 
-const product = new Schema(
+const productSchema = model<IProductDataModel>('Product', new Schema(
   {
     domainId: {
       type: String,
@@ -18,6 +18,6 @@ const product = new Schema(
       index: true
     }
   }, {timestamps: true}
-);
+));
 
-export default model<IProductDataModel>('Product', product);
+export default productSchema;

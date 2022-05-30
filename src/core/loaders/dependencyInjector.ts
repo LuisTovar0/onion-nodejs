@@ -1,8 +1,8 @@
 import {Container} from 'typedi';
 import Logger from './logger';
+import config from "../../config";
 
 export interface InjectablesAndSchemas {
-  schemas: NamePathMap,
   mappers: NamePathMap,
   repos: NamePathMap,
   services: NamePathMap
@@ -17,21 +17,11 @@ export interface NamePath {
   path: string
 }
 
-export default (depNamesPaths: InjectablesAndSchemas) => {
+export default () => {
   try {
     Container.set('logger', Logger);
 
-    /**
-     * We are injecting the mongoose models into the DI container.
-     * This is controversial but it will provide a lot of flexibility
-     * at the time of writing unit tests.
-     */
-    Object.entries(depNamesPaths.schemas).forEach(([, val]) => {
-      const dep = <NamePath>val;
-      let schema = require(dep.path).default;
-      Container.set(dep.name, schema);
-      Logger.info('👌 ' + dep.name + ' loaded');
-    });
+    const depNamesPaths = config.deps as InjectablesAndSchemas;
 
     // a class can only be set after its own dependencies are set
     [depNamesPaths.mappers,// can only depend on each other (must be ordered)

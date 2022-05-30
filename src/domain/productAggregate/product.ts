@@ -22,10 +22,6 @@ export default class Product extends AggregateRoot<PostProps> {
     return new Product({name: name, quantity: quant}, id);
   }
 
-  get id(): UniqueEntityID {
-    return this._id;
-  }
-
   get name(): ProductName {
     return this.props.name;
   }
