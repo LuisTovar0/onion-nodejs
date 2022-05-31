@@ -26,18 +26,21 @@ export default (app: Router) => {
       }
     }),
     async function getProductById(req, res, next) {
-      if (req.query.id)
-        return await StaticController.simpleController(res, next,
-          async () => await service.getProductById((req.query.id || '').toString()),
-          StaticController.ok);
+      return await StaticController.simpleController(res, next,
+        async () => await service.getProductById((req.query.id || '').toString()),
+        StaticController.ok);
     }
   );
 
   route.get('/byname',
+    celebrate({
+      params: {
+        name: Joi.string().required()
+      }
+    }),
     async function getProductByName(req, res, next) {
-      if (req.query.name === undefined)
-        return StaticController.badRequest(res, "'name' parameter not defined in the request.");
-      const name = req.query.name.toString();
+      const name = req.query.name?.toString();
+      if (!name) return StaticController.badRequest(res, `Product name must be a parameter in the request.`);
       return await StaticController.simpleController(res, next,
         async () => await service.getProductByName(name),
         StaticController.ok);
