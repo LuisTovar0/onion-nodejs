@@ -25,11 +25,9 @@ export default (app: Router) => {
         id: Joi.string().uuid()
       }
     }),
-    async function getProductById(req, res, next) {
-      return await StaticController.simpleController(res, next,
-        async () => await service.getProductById((req.query.id || '').toString()),
-        StaticController.ok);
-    }
+    async (req, res, next) =>
+      await StaticController.simpleController(res, next, async () =>
+        await service.getProductById((req.query.id || '').toString()), StaticController.ok)
   );
 
   route.get('/byname',
@@ -38,7 +36,7 @@ export default (app: Router) => {
         name: Joi.string().required()
       }
     }),
-    async function getProductByName(req, res, next) {
+    async (req, res, next) => {
       const name = req.query.name?.toString();
       if (!name) return StaticController.badRequest(res, `Product name must be a parameter in the request.`);
       return await StaticController.simpleController(res, next,
@@ -54,11 +52,9 @@ export default (app: Router) => {
         quantity: Joi.number().required()
       })
     }),
-    async function createProduct(req: Request, res: Response, next: NextFunction) {
-      return await StaticController.simpleController(res, next,
-        async () => await service.createProduct(req.body as INoIdProductDto),
-        StaticController.created);
-    }
+    async (req: Request, res: Response, next: NextFunction) =>
+      await StaticController.simpleController(res, next, async () =>
+        await service.createProduct(req.body as INoIdProductDto), StaticController.created)
   );
 
   route.put('',
@@ -69,7 +65,7 @@ export default (app: Router) => {
         quantity: Joi.number()
       }),
     }),
-    async function updateProduct(req, res, next) {
+    async (req, res, next) => {
       // this is not a complex example, but it shows how the more complex controllers can be made
       const controller = new BaseController(req, res, next);
       try {
