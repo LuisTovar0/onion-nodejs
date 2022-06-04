@@ -21,7 +21,7 @@ export class BaseController {
   }
 
   public ok<T>(dto?: T) {
-    return StaticController.ok(this.res, dto);
+    return StaticController.k(this.res, dto);
   }
 
   public created<T>(dto?: T) {
@@ -52,13 +52,13 @@ export class BaseController {
     return StaticController.notFound(this.res, message);
   }
 
-  public notImplemented() {
-    return this.response(501, 'TODO');
-  }
-
-  public fail(error: Error | string) {
+  public serverError(error: Error | string) {
     Logger.error(error);
     return this.response(500, error.toString());
+  }
+
+  public notImplemented() {
+    return this.response(501, 'TODO');
   }
 }
 
@@ -79,7 +79,7 @@ export class StaticController {
       return StaticController.notFound(res, e.message);
     if (e instanceof ValidationError)
       return StaticController.badRequest(res, e.message);
-    return next(e);
+    return StaticController.serverError(res, e);
   }
 
   public static response<T>(res: Response, code: number, content: T | string) {
@@ -89,7 +89,7 @@ export class StaticController {
     return res.status(code).json(body);
   }
 
-  public static ok<T>(res: Response, dto?: T) {
+  public static k<T>(res: Response, dto?: T) {
     return StaticController.response(res, 200, dto || "OK");
   }
 
@@ -97,12 +97,28 @@ export class StaticController {
     return StaticController.response(res, 201, dto || "Created");
   }
 
-  public static badRequest(res: Response, message?: string) {
-    return StaticController.response(res, 400, message || "Bad Request");
+  public static accepted<T>(res: Response, dto?: T) {
+    return StaticController.response(res, 202, dto || "Accepted");
+  }
+
+  public static badRequest<T>(res: Response, dto?: T) {
+    return StaticController.response(res, 400, dto || "Bad Request");
+  }
+
+  public static unauthorized(res: Response, message?: string) {
+    return StaticController.response(res, 401, message || "Unauthorized");
   }
 
   public static notFound(res: Response, message?: string) {
     return StaticController.response(res, 404, message || 'Not Found');
+  }
+
+  public static serverError(res: Response, e: Error) {
+    return StaticController.response(res, 500, e);
+  }
+
+  public static notImplemented(res: Response) {
+    return StaticController.response(res, 501, `Sorry, not yet implemented!`);
   }
 
 }

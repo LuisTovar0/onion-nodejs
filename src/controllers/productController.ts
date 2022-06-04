@@ -38,9 +38,8 @@ export default (app: Router) => {
     }),
     async (req, res, next) => {
       const name = req.query.name?.toString();
-      if (!name) return StaticController.badRequest(res, `Product name must be a parameter in the request.`);
       return await StaticController.simpleController(res, next,
-        async () => await service.getProductByName(name),
+        async () => await service.getProductByName(name as string),
         StaticController.ok);
     }
   );
