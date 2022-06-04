@@ -15,7 +15,7 @@ export default (app: Router) => {
 
   app.use('/product', route);
 
-  route.get('', (req, res) => StaticController.ok(res, 'Hello World!'));
+  route.get('', (req, res) => StaticController.k(res, 'Hello World!'));
 
   const service = Container.get(config.deps.services.product.name) as IProductService;
 
@@ -27,7 +27,7 @@ export default (app: Router) => {
     }),
     async (req, res, next) =>
       await StaticController.simpleController(res, next, async () =>
-        await service.getProductById((req.query.id || '').toString()), StaticController.ok)
+        await service.getProductById((req.query.id || '').toString()), StaticController.k)
   );
 
   route.get('/byname',
@@ -40,7 +40,7 @@ export default (app: Router) => {
       const name = req.query.name?.toString();
       return await StaticController.simpleController(res, next,
         async () => await service.getProductByName(name as string),
-        StaticController.ok);
+        StaticController.k);
     }
   );
 
@@ -69,7 +69,7 @@ export default (app: Router) => {
       const controller = new BaseController(req, res, next);
       try {
         const productRes: IProductDto = await service.updateProduct(req.body as IUpdateProductDto);
-        return controller.ok(productRes);
+        return controller.response(202, productRes);
       } catch (e) {
         return controller.handleException(e);
       }
